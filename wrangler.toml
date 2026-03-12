@@ -1,0 +1,36 @@
+name = "hive-warehouse"
+main = "src/index.js"
+compatibility_date = "2026-03-12"
+
+[vars]
+ENVIRONMENT = "production"
+MASTER_LINEAGE_HASH = "6693818585306f083fb28f0ad4ed7c0af5e2dc758f811996458d58c138638980"
+
+# D1 Database
+[[d1_databases]]
+binding = "DB"
+database_name = "honey-db"
+database_id = "" # Fill after: wrangler d1 create honey-db
+
+# R2 Buckets
+[[r2_buckets]]
+binding = "CRE_VERIFIED"
+bucket_name = "sb-cre-verified"
+
+[[r2_buckets]]
+binding = "MEDICAL_VERIFIED"
+bucket_name = "sb-medical-verified"
+
+[[r2_buckets]]
+binding = "DELIVERIES"
+bucket_name = "sb-deliveries"
+
+# Rate limiting
+# [unsafe.bindings]
+# - name = "RATE_LIMITER"
+#   type = "ratelimit"
+#   namespace_id = "honey-api"
+#   simple = { limit = 60, period = 60 }
+
+[dev]
+port = 8787
