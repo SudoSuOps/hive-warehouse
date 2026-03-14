@@ -181,5 +181,48 @@ export async function fulfillOrder(env, order, customerTier) {
     VALUES ('fulfill', 'order', ?, ?, ?)
   `).bind(order.order_id, order.customer_id, `${pairs.length} pairs, merkle: ${merkleRoot.slice(0, 16)}...`).run();
 
+  // 12. PUSH revenue to hive-ledger (non-blocking — order succeeds regardless)
+  await pushToLedger(env, order, pairs.length, deliveryCard).catch(err => {
+    console.error(`[ledger-push] Failed for order ${order.order_id}: ${err.message}`);
+  });
+
   return deliveryCard;
+}
+
+async function pushToLedger(env, order, pairCount, deliveryCard) {
+  const ledgerUrl = env.HIVE_LEDGER_URL;
+  const adminKey = env.HIVE_ADMIN_KEY;
+
+  if (!ledgerUrl || !adminKey) {
+    console.log('[ledger-push] HIVE_LEDGER_URL or HIVE_ADMIN_KEY not configured — skipping');
+    return;
+  }
+
+  const body = {
+    order_id: order.order_id,
+    customer_id: order.customer_id,
+    pair_count: pairCount,
+    amount_cents: deliveryCard.quantity * (PRICE_PER_PAIR[order.tier_minimum] || PRICE_PER_PAIR.honey),
+    domain: order.task_type || 'general',
+    tier_minimum: order.tier_minimum,
+    fulfilled_at: deliveryCard.delivered_at,
+  };
+
+  const resp = await fetch(`${ledgerUrl}/api/admin/order`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Admin-Key': adminKey,
+      'User-Agent': 'HiveWarehouse/1.0',
+    },
+    body: JSON.stringify(body),
+  });
+
+  if (!resp.ok) {
+    const text = await resp.text();
+    throw new Error(`HTTP ${resp.status}: ${text}`);
+  }
+
+  const result = await resp.json();
+  console.log(`[ledger-push] Order ${order.order_id} registered: ${JSON.stringify(result)}`);
 }

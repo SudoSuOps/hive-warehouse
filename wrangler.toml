@@ -5,6 +5,8 @@ compatibility_date = "2026-03-12"
 [vars]
 ENVIRONMENT = "production"
 MASTER_LINEAGE_HASH = "6693818585306f083fb28f0ad4ed7c0af5e2dc758f811996458d58c138638980"
+HIVE_LEDGER_URL = "https://ledger.swarmandbee.ai"
+HIVE_ADMIN_KEY = ""  # Set via: wrangler secret put HIVE_ADMIN_KEY
 
 # D1 Database
 [[d1_databases]]
