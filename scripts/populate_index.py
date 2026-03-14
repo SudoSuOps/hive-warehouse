@@ -102,8 +102,13 @@ def generate_sql(input_path, bucket, r2_key, output_path, batch_size=500):
             cell_id = record.get('cell_id', f"cell_{line_num}")
             fingerprint = record.get('fingerprint', content_hash(record))
             task_type = record.get('task_type', 'unclassified')
-            score = record.get('verification_score', record.get('score', record.get('gate_score', 50)))
-            tier = record.get('tier', record.get('cook_tier', score_to_tier(score)))
+            # Support both flat format and HiveCell (jelly_score.score / grade)
+            js = record.get('jelly_score', {})
+            score = js.get('score', 0) if js else 0
+            if not score:
+                score = record.get('verification_score', record.get('score', record.get('gate_score', 50)))
+            tier = record.get('grade', record.get('tier', record.get('cook_tier', score_to_tier(score))))
+            tier = TIER_MAP.get(tier, tier)  # Normalize legacy tier names
             domain = record.get('domain', 'cre')
             cluster = record.get('cluster', '')
             preview = extract_preview(record)
