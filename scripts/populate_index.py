@@ -32,20 +32,24 @@ import sys
 import hashlib
 from pathlib import Path
 
+# Map legacy tier names to RJP-1 canonical tiers
 TIER_MAP = {
-    'genesis': 'genesis',
-    'honey': 'honey', 
-    'cluster': 'cluster',
-    'cell': 'cell',
-    'swarm': 'swarm',
+    'genesis': 'royal_jelly',
+    'royal_jelly': 'royal_jelly',
+    'honey': 'honey',
+    'cluster': 'pollen',
+    'pollen': 'pollen',
+    'cell': 'propolis',
+    'propolis': 'propolis',
+    'swarm': 'propolis',
 }
 
 def score_to_tier(score):
-    if score >= 95: return 'genesis'
+    """RJP-1 tier thresholds."""
+    if score >= 95: return 'royal_jelly'
     if score >= 85: return 'honey'
-    if score >= 70: return 'cluster'
-    if score >= 50: return 'cell'
-    return 'swarm'
+    if score >= 70: return 'pollen'
+    return 'propolis'
 
 def extract_preview(record, max_len=200):
     """Extract a short preview of the user message for catalog display."""
@@ -57,7 +61,7 @@ def extract_preview(record, max_len=200):
     return ''
 
 def content_hash(record):
-    """Generate fingerprint if not present."""
+    """Generate fingerprint if not present. Uses SHA256 per RJP-1 standard."""
     messages = record.get('messages', record.get('conversations', []))
     parts = []
     for msg in messages:
@@ -65,7 +69,7 @@ def content_hash(record):
         content = msg.get('content', '').strip().lower()
         parts.append(f"{role}:{content}")
     blob = "|".join(sorted(parts))
-    return hashlib.md5(blob.encode('utf-8')).hexdigest()
+    return hashlib.sha256(blob.encode('utf-8')).hexdigest()
 
 
 def generate_sql(input_path, bucket, r2_key, output_path, batch_size=500):

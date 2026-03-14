@@ -6,11 +6,11 @@ import { jsonResponse } from '../index.js';
 import { fulfillOrder, calculatePrice } from '../services/fulfillment.js';
 import { sha256 } from '../services/merkle.js';
 
-const VALID_TIERS = ['genesis', 'honey', 'cluster', 'cell'];
+const VALID_TIERS = ['royal_jelly', 'honey', 'pollen', 'propolis'];
 const TIER_CAPS = {
-  explorer: 'cell',
+  explorer: 'propolis',
   pro: 'honey',
-  enterprise: 'genesis',
+  enterprise: 'royal_jelly',
 };
 
 export async function handleOrders(request, env, url, auth) {

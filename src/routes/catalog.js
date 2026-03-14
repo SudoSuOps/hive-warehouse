@@ -5,7 +5,7 @@
 
 import { jsonResponse } from '../index.js';
 
-const TIER_ORDER = ['genesis', 'honey', 'cluster', 'cell', 'swarm'];
+const TIER_ORDER = ['royal_jelly', 'honey', 'pollen', 'propolis'];
 
 function tiersAtOrAbove(minimum) {
   const idx = TIER_ORDER.indexOf(minimum);
@@ -141,7 +141,7 @@ async function getTaskDetail(env, taskType) {
     SELECT cell_id, tier, score, message_preview
     FROM cells
     WHERE task_type = ?
-    AND tier IN ('honey', 'genesis')
+    AND tier IN ('honey', 'royal_jelly')
     ORDER BY RANDOM()
     LIMIT 3
   `).bind(taskType).all();
@@ -171,7 +171,7 @@ async function getSamples(env, taskType) {
     SELECT cell_id, tier, score, r2_bucket, r2_key, line_number
     FROM cells
     WHERE task_type = ?
-    AND tier IN ('honey', 'genesis')
+    AND tier IN ('honey', 'royal_jelly')
     ORDER BY RANDOM()
     LIMIT 3
   `).bind(taskType).all();
@@ -231,9 +231,9 @@ async function getStats(env) {
   
   const byTier = await env.DB.prepare(`
     SELECT tier, COUNT(*) as cnt
-    FROM cells GROUP BY tier ORDER BY 
-      CASE tier WHEN 'genesis' THEN 1 WHEN 'honey' THEN 2 
-      WHEN 'cluster' THEN 3 WHEN 'cell' THEN 4 ELSE 5 END
+    FROM cells GROUP BY tier ORDER BY
+      CASE tier WHEN 'royal_jelly' THEN 1 WHEN 'honey' THEN 2
+      WHEN 'pollen' THEN 3 WHEN 'propolis' THEN 4 ELSE 5 END
   `).all();
 
   const topTasks = await env.DB.prepare(`

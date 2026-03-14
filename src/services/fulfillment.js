@@ -7,11 +7,10 @@ import { computeMerkleRoot } from './merkle.js';
 import { fetchPairFromR2, tiersAtOrAbove } from '../routes/catalog.js';
 
 const PRICE_PER_PAIR = {
-  genesis: 50,   // $0.50 in cents
-  honey: 20,     // $0.20
-  cluster: 8,    // $0.08
-  cell: 3,       // $0.03
-  swarm: 1,      // $0.01
+  royal_jelly: 50,  // $0.50 in cents
+  honey: 20,        // $0.20
+  pollen: 8,        // $0.08
+  propolis: 3,      // $0.03
 };
 
 export function calculatePrice(tierMinimum, quantity, customerTier) {

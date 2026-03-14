@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS cells (
     cell_id TEXT PRIMARY KEY,
     fingerprint TEXT NOT NULL,
     task_type TEXT NOT NULL,
-    tier TEXT NOT NULL CHECK(tier IN ('genesis','honey','cluster','cell','swarm')),
+    tier TEXT NOT NULL CHECK(tier IN ('royal_jelly','honey','pollen','propolis')),
     score REAL NOT NULL CHECK(score >= 0 AND score <= 100),
     domain TEXT NOT NULL DEFAULT 'cre',
     cluster TEXT,
